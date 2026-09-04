@@ -19,8 +19,8 @@ We tick one checkbox per completed pointer. Keep a one-line "keeper insight" und
 - [x] P1.2.3 Antipatterns: Frozen Caveman, Bottleneck Trap — insight: Frozen Caveman = one old scar becomes a permanent veto ("what if we lose Italy?"); antidote is realistic risk assessment, not forgetting. Bottleneck Trap = architect holding critical-path code; antidote: delegate critical path, stay hands-on via POCs, tech debt, bugs, automation, reviews.
 - [x] P1.2.4 Analyzing trade-offs (auction case) — insight: Consolidated in Lesson 05 simulation (queue-vs-topic + business-driver presets); see curriculum/lessons/lesson-05-architects-translator.html.
 - [x] P1.2.5 Business drivers → characteristics — insight: Stakeholder sentences translate into named characteristics WITH numbers; 3–5 rule; conflicts (security↔performance, scale↔simplicity) get decided, not dodged. Interactive translator in Lesson 05.
-- [ ] P1.3.1 Modularity vs granularity — insight:
-- [ ] P1.3.2 Cohesion: the 7 levels — insight:
+- [x] P1.3.1 Modularity vs granularity — insight: Splitting = modularity (good); sizing = granularity (the danger). Pieces grow linearly, wiring grows quadratically (N(N−1)/2) — the Splitting Machine simulation makes it visceral. Lesson 06.
+- [x] P1.3.2 Cohesion: the 7 levels — insight: Functional → sequential → communicational → procedural → temporal → logical → coincidental. "Same file" ≠ "same family"; splitting a cohesive module only creates coupling. Fake Family Detector game in Lesson 06.
 - [ ] P1.3.3 Coupling metrics: A, I, distance from main sequence — insight:
 - [ ] P1.3.4 Connascence taxonomy — insight:
 - [ ] P1.3.5 From modules to components — insight:

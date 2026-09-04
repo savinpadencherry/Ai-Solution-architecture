@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 06 · Modularity — Real Family vs Fake Family</title>
+<style>
+  :root{
+    --bg:#0d1022; --panel:#171b33; --panel2:#1e2342; --line:#2c3358;
+    --text:#e9ecff; --muted:#9aa3cc; --blue:#4fc3f7; --orange:#ffb74d;
+    --green:#6fdd8b; --red:#ff6b6b; --purple:#b388ff; --gold:#ffd54f;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; line-height:1.55;}
+  .wrap{max-width:980px; margin:0 auto; padding:28px 20px 80px;}
+  header{padding:34px 0 10px;}
+  .kicker{color:var(--purple); font-weight:700; letter-spacing:.12em; text-transform:uppercase; font-size:.78rem;}
+  h1{font-size:2rem; margin:.2em 0 .3em; line-height:1.15;}
+  .sub{color:var(--muted); font-size:1.02rem; max-width:46em;}
+  section{margin-top:44px;}
+  h2{font-size:1.35rem; margin-bottom:.2em;}
+  h2 .tag{font-size:.7rem; background:var(--panel2); border:1px solid var(--line); color:var(--muted); border-radius:20px; padding:2px 10px; vertical-align:middle; margin-left:8px; font-weight:600;}
+  .lead{color:var(--muted); margin-bottom:18px; max-width:48em;}
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:20px;}
+  .hint{color:var(--muted); font-size:.9rem; margin-top:10px;}
+  .hint b{color:var(--text);}
+  .stage{background:#12162c; border:1px solid var(--line); border-radius:14px; padding:6px; margin-top:8px;}
+  svg{display:block; width:100%; height:auto;}
+  .callout{margin-top:14px; border-left:4px solid var(--purple); background:rgba(179,136,255,.07); border-radius:0 12px 12px 0; padding:12px 16px; font-size:.95rem;}
+  .callout b{color:var(--purple);}
+  .oneLiner{margin-top:30px; text-align:center; font-size:1.15rem; font-weight:700; padding:18px; border:1px dashed var(--line); border-radius:14px; color:var(--gold);}
+  footer{margin-top:50px; color:var(--muted); font-size:.8rem; text-align:center;}
+
+  /* slider */
+  input[type=range]{width:100%; accent-color:var(--green); height:34px;}
+  .sliderrow{display:flex; align-items:center; gap:14px;}
+  .zonebadge{font-weight:800; border-radius:10px; padding:6px 14px; min-width:250px; text-align:center; white-space:nowrap;}
+  @media(max-width:560px){.zonebadge{min-width:0; font-size:.85rem; white-space:normal;}}
+  .z-blue{background:rgba(79,195,247,.12); color:var(--blue); border:1px solid var(--blue);}
+  .z-green{background:rgba(111,221,139,.12); color:var(--green); border:1px solid var(--green);}
+  .z-orange{background:rgba(255,183,77,.12); color:var(--orange); border:1px solid var(--orange);}
+  .z-red{background:rgba(255,107,107,.12); color:var(--red); border:1px solid var(--red);}
+  .bigstat{display:flex; gap:12px; margin-top:12px; flex-wrap:wrap;}
+  .stat{flex:1; background:var(--panel2); border:1px solid var(--line); border-radius:12px; padding:10px 14px; text-align:center;}
+  .stat .n{font-size:1.5rem; font-weight:800;}
+  .stat .t{font-size:.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:.08em;}
+  .quoteline{margin-top:12px; font-size:.95rem; color:var(--gold); text-align:center; font-style:italic;}
+
+  /* cohesion ladder */
+  .ladder{display:flex; flex-direction:column; gap:8px; margin-top:14px;}
+  .rung{display:flex; align-items:center; gap:12px; border:1px solid var(--line); border-radius:12px; padding:10px 14px; background:var(--panel2);}
+  .rung .rank{font-size:1.1rem; font-weight:800; width:30px; text-align:center; flex-shrink:0;}
+  .rung .nm{font-weight:700; min-width:150px;}
+  @media(max-width:560px){.rung .nm{min-width:0;}}
+  .rung .ds{color:var(--muted); font-size:.88rem;}
+  .r-1{border-left:5px solid #2e7d32;} .r-2{border-left:5px solid #558b2f;}
+  .r-3{border-left:5px solid #9e9d24;} .r-4{border-left:5px solid #f9a825;}
+  .r-5{border-left:5px solid #ef6c00;} .r-6{border-left:5px solid #e53935;}
+  .r-7{border-left:5px solid #b71c1c;}
+
+  /* game */
+  .modscreener{background:#12162c; border:1px solid var(--line); border-radius:14px; padding:18px;}
+  .modname{font-weight:800; font-size:1.1rem; color:var(--blue);}
+  .fnlist{margin:10px 0 4px; display:flex; flex-direction:column; gap:6px;}
+  .fn{font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.85rem; background:var(--panel2); border:1px solid var(--line); border-radius:8px; padding:7px 12px;}
+  .qline{color:var(--muted); font-size:.9rem; margin-top:10px;}
+  .answers{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;}
+  .ans{background:var(--panel2); border:1px solid var(--line); color:var(--text); border-radius:10px; padding:8px 13px; font-size:.85rem; font-weight:600; cursor:pointer; transition:all .12s;}
+  .ans:hover{border-color:var(--muted); transform:translateY(-1px);}
+  .ans.correct{background:rgba(111,221,139,.15); border-color:var(--green); color:var(--green);}
+  .ans.wrong{background:rgba(255,107,107,.12); border-color:var(--red); color:var(--red); text-decoration:line-through;}
+  .ans:disabled{cursor:default; opacity:.85;}
+  .feedback{display:none; margin-top:12px; border-radius:12px; padding:12px 14px; font-size:.92rem;}
+  .feedback.ok{display:block; background:rgba(111,221,139,.09); border:1px solid var(--green);}
+  .feedback.no{display:block; background:rgba(255,107,107,.09); border:1px solid var(--red);}
+  .feedback b.good{color:var(--green);} .feedback b.bad{color:var(--red);}
+  .progressrow{display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; color:var(--muted); font-size:.85rem;}
+  .nextbtn{margin-top:12px; background:var(--blue); border:none; color:#08111c; font-weight:800; border-radius:10px; padding:10px 22px; cursor:pointer; display:none;}
+  .nextbtn.show{display:inline-block;}
+  .finalbox{display:none; text-align:center; padding:24px;}
+  .finalbox.show{display:block;}
+  .finalbox .big{font-size:2rem; font-weight:800; color:var(--gold);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">Phase 1 · Lesson 06 · P1.3.1 + P1.3.2</div>
+  <h1>🧩 Modularity — Real Family vs Fake Family</h1>
+  <p class="sub">Everyone agrees code should be “modular.” Almost nobody agrees what that means. Two skills in this lesson: <b>how much to split</b> (granularity), and <b>telling a real family from a fake one</b> (cohesion).</p>
+</header>
+
+<!-- ============ PART 1 ============ -->
+<section>
+  <h2>Part 1 · The Splitting Machine <span class="tag">P1.3.1</span></h2>
+  <p class="lead">Splitting a system into pieces = <b>modularity</b> (good!). Deciding the <b>size</b> of the pieces = <b>granularity</b> (where everyone gets hurt). Drag the slider and watch the wiring — not just the boxes.</p>
+
+  <div class="card">
+    <div class="sliderrow">
+      <input type="range" id="split" min="1" max="16" value="1" oninput="redraw()">
+      <span class="zonebadge z-blue" id="zone">🏔️ The Monolith</span>
+    </div>
+    <div class="stage">
+      <svg viewBox="0 0 640 380" id="splitSvg"></svg>
+    </div>
+    <div class="bigstat">
+      <div class="stat"><div class="n" id="nPieces">1</div><div class="t">pieces</div></div>
+      <div class="stat"><div class="n" id="nWires" style="color:var(--blue)">0</div><div class="t">communication wires</div></div>
+      <div class="stat"><div class="n" id="nRatio">—</div><div class="t">wires per piece</div></div>
+    </div>
+    <p class="hint" id="zoneText">One piece. Nothing to coordinate. Simple — but every change, deploy, and failure lives in this single box.</p>
+    <div class="quoteline">“Embrace modularity — but beware of granularity.” — Mark Richards</div>
+  </div>
+</section>
+
+<!-- ============ PART 2 ============ -->
+<section>
+  <h2>Part 2 · The Cohesion Ladder <span class="tag">P1.3.2</span></h2>
+  <p class="lead"><b>Cohesion</b> asks one question about a module: <i>do these functions belong together for a real reason, or were they just dumped in the same file?</i> Computer science ranked the 7 levels of “belonging” from best to worst:</p>
+
+  <div class="card">
+    <div class="ladder">
+      <div class="rung r-1"><span class="rank">🥇</span><span class="nm">Functional</span><span class="ds">every part serves <b>one single job</b> — a real family</span></div>
+      <div class="rung r-2"><span class="rank">🥈</span><span class="nm">Sequential</span><span class="ds">an assembly line — output of one part feeds the next</span></div>
+      <div class="rung r-3"><span class="rank">🥉</span><span class="nm">Communicational</span><span class="ds">parts work on the <b>same data</b> but do unrelated things with it</span></div>
+      <div class="rung r-4"><span class="rank">4</span><span class="nm">Procedural</span><span class="ds">no data flows between them — but they <b>must run in an order</b></span></div>
+      <div class="rung r-5"><span class="rank">5</span><span class="nm">Temporal</span><span class="ds">bonded by a <b>moment in time</b> (“we all run at startup”), not a purpose</span></div>
+      <div class="rung r-6"><span class="rank">6</span><span class="nm">Logical</span><span class="ds">category-brothers (“all about strings”) who are otherwise strangers</span></div>
+      <div class="rung r-7"><span class="rank">💀</span><span class="nm">Coincidental</span><span class="ds">the junk drawer — random stuff in one file for no reason at all</span></div>
+    </div>
+    <div class="callout"><b>Why you should care:</b> splitting a truly cohesive module only <i>creates</i> coupling between the halves. And a junk-drawer module is where codebases rot first. Cohesion is the difference between “split” and “shatter.”</div>
+  </div>
+</section>
+
+<!-- ============ PART 3 ============ -->
+<section>
+  <h2>Part 3 · The Fake Family Detector <span class="tag">play it</span></h2>
+  <p class="lead">Seven modules from the wild. For each: <b>what kind of family is this?</b> First-try hits are counted — but guessing is how you learn, so just play.</p>
+
+  <div class="card">
+    <div id="game" class="modscreener">
+      <div class="progressrow"><span id="gstep">Module 1 of 7</span><span id="gscore">🎯 first-try: 0</span></div>
+      <div class="modname" id="mname"></div>
+      <div class="fnlist" id="mfns"></div>
+      <div class="qline">How does this module hold together?</div>
+      <div class="answers" id="mans"></div>
+      <div class="feedback" id="mfeed"></div>
+      <button class="nextbtn" id="mnext" onclick="nextQ()">Next module →</button>
+    </div>
+    <div id="final" class="finalbox">
+      <div class="big" id="finalScore"></div>
+      <p id="finalMsg" style="color:var(--muted); margin-top:8px;"></p>
+      <button class="nextbtn show" style="margin-top:16px" onclick="resetGame()">↺ Play again</button>
+    </div>
+  </div>
+</section>
+
+<div class="oneLiner">Split for a real reason, keep the pieces human-sized —<br>and never mistake “same file” for “same family.”</div>
+
+<footer>ZCode AI-Architect Academy · Lesson 06 · built from Richards & Ford, <i>Fundamentals of Software Architecture</i> ch. 3</footer>
+</div>
+
+<script>
+/* ================= Part 1: splitting machine ================= */
+const NAMES = ["the whole app","orders","payments","auth","catalog","notify","search","email","reports","cron","admin","api-gw","cache","uploads","logs","misc"];
+const ZONES = [
+  {max:1, cls:'z-blue',  label:'🏔️ The Monolith',
+   text:'One piece. Nothing to coordinate. Simple — but every change, deploy, and failure lives in this single box.'},
+  {max:3, cls:'z-green', label:'🤝 Modular — human-sized',
+   text:'A few clear pieces with obvious jobs and a couple of well-defined contracts. This is the “modular monolith” zone many teams should live in.'},
+  {max:6, cls:'z-green', label:'✅ Sweet spot',
+   text:'Independent pieces, a handful of intentional connections. Each piece can be understood — and owned — by one person.'},
+  {max:9, cls:'z-orange',label:'😬 Getting chatty',
+   text:'Coordination overhead is climbing fast. Every new piece wants to talk to several others — meetings, contracts, failure modes multiply.'},
+  {max:16,cls:'z-red',   label:'🍝 Distributed Big Ball of Mud',
+   text:'More wires than code. Nobody knows who talks to whom; a change ripples everywhere. This is granularity gone wrong — split too fine and the WIRING becomes the system.'}
+];
+const svg = document.getElementById('splitSvg');
+function redraw(){
+  const N = +document.getElementById('split').value;
+  const z = ZONES.find(z=>N<=z.max);
+  const badge = document.getElementById('zone');
+  badge.className = 'zonebadge ' + z.cls;
+  badge.textContent = z.label + '  ·  ' + N + (N===1?' piece':' pieces');
+  document.getElementById('zoneText').textContent = z.text;
+  const wires = N*(N-1)/2;
+  document.getElementById('nPieces').textContent = N;
+  document.getElementById('nWires').textContent = wires;
+  document.getElementById('nWires').style.color = N<=6?'var(--green)':(N<=9?'var(--orange)':'var(--red)');
+  document.getElementById('nRatio').textContent = N>1 ? (wires/N).toFixed(1) : '—';
+  // line color by zone
+  const lc = N<=2 ? 'var(--blue)' : N<=6 ? 'var(--green)' : N<=9 ? 'var(--orange)' : 'var(--red)';
+  const cx=320, cy=185, rx=190, ry=125, W=96, H=34;
+  const pos = [];
+  for(let i=0;i<N;i++){
+    const a = (i/N)*2*Math.PI - Math.PI/2;
+    pos.push([cx+rx*Math.cos(a), cy+ry*Math.sin(a)]);
+  }
+  let s = '';
+  for(let i=0;i<N;i++) for(let j=i+1;j<N;j++){
+    s += `<line x1="${pos[i][0]}" y1="${pos[i][1]}" x2="${pos[j][0]}" y2="${pos[j][1]}" stroke="${lc}" stroke-opacity=".55" stroke-width="${N>9?1:1.8}"/>`;
+  }
+  for(let i=0;i<N;i++){
+    const [x,y]=pos[i];
+    s += `<rect x="${x-W/2}" y="${y-H/2}" width="${W}" height="${H}" rx="9" fill="#232a52" stroke="${lc}" stroke-width="1.5"/>`;
+    s += `<text x="${x}" y="${y+1}" fill="#e9ecff" font-size="11" font-weight="600" text-anchor="middle" dominant-baseline="middle">${N===1?'the whole app':NAMES[i]||('svc-'+i)}</text>`;
+  }
+  svg.innerHTML = s;
+}
+redraw();
+
+/* ================= Part 3: game ================= */
+const TYPES = ["Functional","Sequential","Communicational","Procedural","Temporal","Logical","Coincidental"];
+const QUESTIONS = [
+  {name:'📬 PaymentModule', fns:['chargeCard()','refundCard()','validateCard()'], a:'Functional',
+   why:'Every function exists to serve ONE job: payments. This is the gold standard — a real family. Splitting it would only create coupling between the halves.'},
+  {name:'🚚 PipelineModule', fns:['fetchRawOrders()','cleanOrders()','aggregateDailySales()'], a:'Sequential',
+   why:'An assembly line: the output of each function is the input of the next. Strong cohesion — and each stage is independently testable.'},
+  {name:'🧾 OrderFulfillmentModule', fns:['generateInvoicePDF(order)','emailInvoiceToCustomer(order)'], a:'Communicational',
+   why:'Both operate on the SAME data (the order) but do unrelated things with it — one prints, one emails. They’re bonded by shared data: “communicational.”'},
+  {name:'🛒 CheckoutModule', fns:['validateCart()','reserveStock()','takePayment()'], a:'Procedural',
+   why:'Little data flows between them — but the ORDER is everything. You can’t take payment before reserving stock. One rank weaker than sequential.'},
+  {name:'🌅 StartupModule', fns:['initDatabase()','loadConfig()','warmCache()','startMetrics()'], a:'Temporal',
+   why:'These tasks have nothing in common EXCEPT they all happen at boot time. Bonded by a moment, not a purpose — the classic “temporal” module.'},
+  {name:'🧵 StringUtils', fns:['capitalize()','leftPad()','countVowels()'], a:'Logical',
+   why:'The book’s favorite example: related by category (“they’re all about strings”) but functionally strangers. Convenient… and weakly bonded.'},
+  {name:'🗑️ JunkDrawerUtils', fns:['calculateTax()','renderButton()','parseCSV()','logAlarm()'], a:'Coincidental',
+   why:'Random stuff in one file because nobody knew where else to put it. The junk drawer — the worst cohesion, and the first place every codebase rots.'}
+];
+let step=0, firstTry=0, answered=false;
+const $id = id=>document.getElementById(id);
+function showQ(){
+  answered=false;
+  const q = QUESTIONS[step];
+  $id('gstep').textContent = `Module ${step+1} of ${QUESTIONS.length}`;
+  $id('mname').textContent = q.name;
+  $id('mfns').innerHTML = q.fns.map(f=>`<div class="fn">${f}</div>`).join('');
+  $id('mans').innerHTML = TYPES.map(t=>`<button class="ans" onclick="answer(this,'${t}')">${t}</button>`).join('');
+  $id('mfeed').className='feedback'; $id('mfeed').innerHTML='';
+  $id('mnext').classList.remove('show');
+}
+function answer(btn, t){
+  if(answered) return;
+  const q = QUESTIONS[step];
+  const buttons = document.querySelectorAll('#mans .ans');
+  buttons.forEach(b=>b.disabled=true);
+  const fb = $id('mfeed');
+  if(t===q.a){
+    btn.classList.add('correct');
+    if(!answered) firstTry++;
+    fb.className='feedback ok';
+    fb.innerHTML = `<b class="good">✔ ${q.a}. </b>${q.why}`;
+  } else {
+    btn.classList.add('wrong');
+    const right = [...buttons].find(b=>b.textContent===q.a);
+    if(right) right.classList.add('correct');
+    fb.className='feedback no';
+    fb.innerHTML = `<b class="bad">✘ It’s ${q.a}. </b>${q.why}`;
+  }
+  answered=true;
+  $id('gscore').textContent = `🎯 first-try: ${firstTry}`;
+  $id('mnext').classList.add('show');
+}
+function nextQ(){
+  step++;
+  if(step>=QUESTIONS.length){
+    $id('game').style.display='none';
+    $id('final').classList.add('show');
+    $id('finalScore').textContent = `${firstTry} / ${QUESTIONS.length} first-try`;
+    $id('finalMsg').textContent =
+      firstTry>=6 ? 'Fake-family radar: fully calibrated. You see cohesion now — it will haunt you (in a good way) every time you open a utils file.'
+    : firstTry>=4 ? 'Solid radar. The subtle pairs (sequential vs procedural, communicational vs temporal) catch everyone — replay once and they’ll stick.'
+    : 'Replay it once — after the second pass the 7 levels become instant recognition.';
+    return;
+  }
+  showQ();
+}
+function resetGame(){
+  step=0; firstTry=0;
+  $id('gscore').textContent = '🎯 first-try: 0';
+  $id('final').classList.remove('show');
+  $id('game').style.display='block';
+  showQ();
+}
+showQ();
+</script>
+</body>
+</html>
