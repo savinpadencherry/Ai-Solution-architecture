@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 07 · Coupling Metrics — the Zone of Pain</title>
+<style>
+  :root{
+    --bg:#0d1022; --panel:#171b33; --panel2:#1e2342; --line:#2c3358;
+    --text:#e9ecff; --muted:#9aa3cc; --blue:#4fc3f7; --orange:#ffb74d;
+    --green:#6fdd8b; --red:#ff6b6b; --purple:#b388ff; --gold:#ffd54f;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; line-height:1.55;}
+  .wrap{max-width:980px; margin:0 auto; padding:28px 20px 80px;}
+  header{padding:34px 0 10px;}
+  .kicker{color:var(--purple); font-weight:700; letter-spacing:.12em; text-transform:uppercase; font-size:.78rem;}
+  h1{font-size:2rem; margin:.2em 0 .3em; line-height:1.15;}
+  .sub{color:var(--muted); font-size:1.02rem; max-width:46em;}
+  section{margin-top:44px;}
+  h2{font-size:1.35rem; margin-bottom:.2em;}
+  h2 .tag{font-size:.7rem; background:var(--panel2); border:1px solid var(--line); color:var(--muted); border-radius:20px; padding:2px 10px; vertical-align:middle; margin-left:8px; font-weight:600;}
+  .lead{color:var(--muted); margin-bottom:18px; max-width:48em;}
+  .lead b{color:var(--text);}
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:20px;}
+  .stage{background:#12162c; border:1px solid var(--line); border-radius:14px; padding:6px; margin-top:8px;}
+  svg{display:block; width:100%; height:auto; touch-action:none;}
+  .hint{color:var(--muted); font-size:.9rem; margin-top:10px;}
+  .hint b{color:var(--text);}
+  .callout{margin-top:14px; border-left:4px solid var(--purple); background:rgba(179,136,255,.07); border-radius:0 12px 12px 0; padding:12px 16px; font-size:.95rem;}
+  .callout b{color:var(--purple);}
+  .oneLiner{margin-top:30px; text-align:center; font-size:1.15rem; font-weight:700; padding:18px; border:1px dashed var(--line); border-radius:14px; color:var(--gold);}
+  footer{margin-top:50px; color:var(--muted); font-size:.8rem; text-align:center;}
+  .btnrow{display:flex; gap:10px; flex-wrap:wrap; margin:14px 0;}
+  .btn{background:var(--panel2); color:var(--text); border:1px solid var(--line); border-radius:12px; padding:10px 16px; font-size:.92rem; font-weight:600; cursor:pointer; transition:all .15s;}
+  .btn:hover{transform:translateY(-1px); border-color:var(--muted);}
+  .btn:disabled{opacity:.35; cursor:default; transform:none;}
+  .formula{font-family:ui-monospace,Menlo,Consolas,monospace; background:#12162c; border:1px solid var(--line); border-radius:10px; padding:10px 14px; font-size:.9rem; margin-top:10px;}
+  .formula .res{color:var(--gold); font-weight:700;}
+  .verdictbox{margin-top:12px; border-radius:12px; padding:14px 16px; border:1px solid var(--line); background:var(--panel2); font-size:.95rem;}
+  .verdictbox .vh{font-weight:800;}
+  .verdictbox .vb{color:var(--muted); margin-top:4px;}
+  .cols{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  @media(max-width:760px){.cols{grid-template-columns:1fr;}}
+
+  /* metric machine */
+  .steps{margin-top:12px; display:flex; flex-direction:column; gap:8px;}
+  .step{background:var(--panel2); border:1px solid var(--line); border-radius:10px; padding:10px 14px; font-size:.9rem; display:none; animation:fade .3s ease;}
+  .step.show{display:block;}
+  .step .k{color:var(--muted); font-size:.75rem; text-transform:uppercase; letter-spacing:.08em;}
+  .step .v{font-family:ui-monospace,Menlo,Consolas,monospace; margin-top:2px;}
+  .step.final{border-color:var(--red); background:rgba(255,107,107,.08);}
+  .step.final.violet{border-color:var(--purple); background:rgba(179,136,255,.08);}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">Phase 1 · Lesson 07 · P1.3.3</div>
+  <h1>📈 Coupling Metrics — the Zone of Pain Map</h1>
+  <p class="sub">Lesson 06 taught your gut to feel cohesion. This lesson gives your gut <b>numbers</b>: architects measure how much a component leans on others, and whether its position on the map is healthy — or a slow-motion injury.</p>
+</header>
+
+<!-- ============ PART 1 ============ -->
+<section>
+  <h2>Part 1 · The Stability See-Saw</h2>
+  <p class="lead">Two directions of dependency, two pieces of jargon: <b>afferent</b> = arrows coming <b>IN</b> (“who leans on me”), <b>efferent</b> = arrows going <b>OUT</b> (“who I lean on”). Press the buttons and watch the see-saw. 🍽️ Analogy: the kitchen that every waiter depends on — vs the specials board that chases the market.</p>
+
+  <div class="card">
+    <div class="btnrow">
+      <button class="btn" id="bIn" onclick="bump('in')">＋ someone depends on me (afferent ↑)</button>
+      <button class="btn" id="bOut" onclick="bump('out')">＋ I depend on someone (efferent ↑)</button>
+      <button class="btn" onclick="resetSee()">↺ reset</button>
+    </div>
+    <div class="stage">
+      <svg viewBox="0 0 560 330" id="seeSvg"></svg>
+    </div>
+    <div class="formula" id="iFormula">Instability&nbsp; I = efferent ÷ (afferent + efferent) = <span class="res">—</span></div>
+    <div class="verdictbox" id="seeVerdict">
+      <div class="vh">⚖️ Balanced-ish</div>
+      <div class="vb">Dependencies flow both ways at a moderate rate.</div>
+    </div>
+    <div class="callout"><b>The twist most people miss:</b> neither pole is “bad.” Stability is a <b>role</b>, not a score. Rock-solid foundations <i>should</i> be boring; skins and screens <i>should</i> be restless. Trouble starts when a component sits at the wrong pole for its job.</div>
+  </div>
+</section>
+
+<!-- ============ PART 2 ============ -->
+<section>
+  <h2>Part 2 · The Map — drag your component <span class="tag">the centerpiece</span></h2>
+  <p class="lead">Architects plot every component on two axes: <b>A</b> = how abstract (contracts &amp; interfaces, vs real working code) and <b>I</b> = instability from Part 1. The healthy ones live near the <b>main-sequence diagonal</b>: <i>as abstract as its instability demands.</i> <b>Drag the dot</b> (or tap anywhere) — the map diagnoses where you landed.</p>
+
+  <div class="card">
+    <div class="stage">
+      <svg viewBox="0 0 540 540" id="map">
+        <defs>
+          <radialGradient id="painG"><stop offset="0%" stop-color="#ff6b6b" stop-opacity=".28"/><stop offset="100%" stop-color="#ff6b6b" stop-opacity="0"/></radialGradient>
+          <radialGradient id="useG"><stop offset="0%" stop-color="#b388ff" stop-opacity=".28"/><stop offset="100%" stop-color="#b388ff" stop-opacity="0"/></radialGradient>
+        </defs>
+        <rect x="40" y="40" width="460" height="460" fill="#12162c" stroke="#2c3358"/>
+        <circle cx="40" cy="500" r="170" fill="url(#painG)"/>
+        <circle cx="500" cy="40" r="170" fill="url(#useG)"/>
+        <line x1="40" y1="40" x2="500" y2="500" stroke="#6fdd8b" stroke-width="2.5" stroke-dasharray="10 6"/>
+        <text x="60" y="470" fill="#ff6b6b" font-size="13" font-weight="700">ZONE OF PAIN</text>
+        <text x="60" y="488" fill="#9aa3cc" font-size="10">stable + fully concrete = rigid concrete everyone leans on</text>
+        <text x="330" y="70" fill="#b388ff" font-size="13" font-weight="700">ZONE OF USELESSNESS</text>
+        <text x="330" y="88" fill="#9aa3cc" font-size="10">abstract + restless = fancy promises nobody consumes</text>
+        <text x="300" y="380" fill="#6fdd8b" font-size="11" font-weight="700" transform="rotate(45 300 380)">MAIN SEQUENCE — the healthy diagonal</text>
+        <text x="250" y="530" fill="#9aa3cc" font-size="12">Abstractness (A) →</text>
+        <text x="18" y="290" fill="#9aa3cc" font-size="12" transform="rotate(-90 18 290)">Instability (I) →</text>
+        <g id="dot"></g>
+      </svg>
+    </div>
+    <div class="cols" style="margin-top:12px">
+      <div>
+        <div class="formula">A = abstract elements ÷ total elements = <span class="res" id="aVal">0.50</span></div>
+        <div class="formula">I = efferent ÷ (afferent + efferent) = <span class="res" id="iVal">0.50</span></div>
+        <div class="formula">Distance from main sequence&nbsp; D′ = |A + I − 1| = <span class="res" id="dVal">0.00</span></div>
+      </div>
+      <div class="verdictbox" id="mapVerdict">
+        <div class="vh">🟢 On the healthy diagonal</div>
+        <div class="vb">As abstract as its instability demands. Nothing to fix.</div>
+      </div>
+    </div>
+    <p class="hint">💡 <b>Try these two drags:</b> bottom-left corner (stable <i>and</i> concrete — the pain trap) and top-right corner (abstract <i>and</i> restless — the vanity trap). Then find the diagonal.</p>
+  </div>
+</section>
+
+<!-- ============ PART 3 ============ -->
+<section>
+  <h2>Part 3 · The Metric Machine — real arithmetic, step by step</h2>
+  <p class="lead">Two real packages from one codebase. Step through the formulas with actual numbers — after these two, you can compute D′ on a napkin.</p>
+
+  <div class="card">
+    <div class="btnrow">
+      <button class="btn active" id="tabA" onclick="loadExample(0)">core-model — “the shared brain”</button>
+      <button class="btn" id="tabB" onclick="loadExample(1)">trend-abstractions — “the vision board”</button>
+    </div>
+    <div class="steps" id="steps"></div>
+    <div class="btnrow" style="margin-bottom:0">
+      <button class="btn" id="nextStep" onclick="nextStep()">▶ next step</button>
+      <button class="btn" onclick="loadExample(ex)">↺ restart this one</button>
+    </div>
+  </div>
+</section>
+
+<div class="oneLiner">Stability is a role, not a score —<br>be as abstract as your instability demands, and measure it before it hurts.</div>
+
+<footer>ZCode AI-Architect Academy · Lesson 07 · built from Richards &amp; Ford, <i>Fundamentals of Software Architecture</i> ch. 3 (metrics after Robert C. Martin) — tools: JDepend &amp; friends</footer>
+</div>
+
+<script>
+/* ================= PART 1: see-saw ================= */
+let Ca=1, Ce=1;   // start with a bit of both so the see-saw reads instantly
+const seeSvg = document.getElementById('seeSvg');
+const IN_NAMES  = ['billing','shipping','reports','admin','api'];
+const OUT_NAMES = ['logger','date-utils','http','json','cache'];
+function bump(which){ if(which==='in'){ if(Ca<5)Ca++; } else { if(Ce<5)Ce++; } drawSee(); }
+function resetSee(){ Ca=1; Ce=1; drawSee(); }
+function drawSee(){
+  const I = (Ca+Ce)===0 ? 0 : Ce/(Ca+Ce);
+  let s = '';
+  // center package
+  s += `<rect x="220" y="128" width="120" height="62" rx="10" fill="#232a52" stroke="#4fc3f7" stroke-width="2"/>`;
+  s += `<text x="280" y="156" fill="#e9ecff" font-size="13" font-weight="700" text-anchor="middle">payments-core</text>`;
+  s += `<text x="280" y="174" fill="#9aa3cc" font-size="10" text-anchor="middle">the component under study</text>`;
+  // afferent (left): boxes lean ON center (arrows point right, INTO center)
+  for(let i=0;i<Ca;i++){
+    const y = 28 + i*56;
+    s += `<rect x="20" y="${y}" width="110" height="36" rx="8" fill="#232a52" stroke="#3a4380"/>`;
+    s += `<text x="75" y="${y+18}" fill="#e9ecff" font-size="11" text-anchor="middle" dominant-baseline="middle">${IN_NAMES[i]}</text>`;
+    s += `<line x1="130" y1="${y+18}" x2="216" y2="${y+18 < 159 ? Math.max(y+18,159):159-(i*2)}" stroke="#4fc3f7" stroke-width="1.6" opacity=".8"/>
+          <polygon points="216,159 206,154 206,164" fill="#4fc3f7" transform="translate(0,${y+18-159})" opacity=".8"/>`;
+  }
+  // efferent (right): center depends on them (arrows point right, OUT of center)
+  for(let i=0;i<Ce;i++){
+    const y = 28 + i*56;
+    s += `<rect x="430" y="${y}" width="110" height="36" rx="8" fill="#232a52" stroke="#3a4380"/>`;
+    s += `<text x="485" y="${y+18}" fill="#e9ecff" font-size="11" text-anchor="middle" dominant-baseline="middle">${OUT_NAMES[i]}</text>`;
+    s += `<line x1="344" y1="159" x2="426" y2="${y+18}" stroke="#ffb74d" stroke-width="1.6" opacity=".8"/>
+          <polygon points="426,${y+18} 416,${y+13} 416,${y+23}" fill="#ffb74d" opacity=".8"/>`;
+  }
+  seeSvg.innerHTML = s;
+  document.getElementById('iFormula').innerHTML =
+    `Instability&nbsp; I = efferent ÷ (afferent + efferent) = ${Ce} ÷ (${Ca}+${Ce}) = <span class="res">${(Ca+Ce)?I.toFixed(2):'—'}</span>`;
+  const v = document.getElementById('seeVerdict');
+  if(I < 0.3){ v.innerHTML = `<div class="vh" style="color:var(--blue)">🪨 Rock solid (${I.toFixed(2)})</div><div class="vb">Everyone leans on it; it leans on almost nobody. Changes here are FELT everywhere — so this component must be boring, reliable, and slow to change. Think: foundations.</div>`; }
+  else if(I <= 0.7){ v.innerHTML = `<div class="vh">⚖️ Balanced (${I.toFixed(2)})</div><div class="vb">Dependencies flow both ways at a moderate rate. Nothing alarming — check its spot on the map below.</div>`; }
+  else { v.innerHTML = `<div class="vh" style="color:var(--orange)">🎈 Balloon (${I.toFixed(2)})</div><div class="vb">It chases everyone; almost nobody chases it. Free to change constantly — often perfect for UIs, screens, and experimental code. Just don’t let anyone build a foundation on it.</div>`; }
+}
+drawSee();
+
+/* ================= PART 2: the map ================= */
+const map = document.getElementById('map');
+const dotG = document.getElementById('dot');
+let A=0.5, I=0.5, dragging=false;
+const X0=40, Y0=40, S=460; // plot area
+function toXY(a,i){ return [X0+a*S, Y0+(1-i)*S]; }
+function fromXY(x,y){ return [Math.min(1,Math.max(0,(x-X0)/S)), Math.min(1,Math.max(0,1-(y-Y0)/S))]; }
+function drawDot(){
+  const [x,y] = toXY(A,I);
+  const Dp = Math.abs(A+I-1);
+  const col = Dp<0.15 ? 'var(--green)' : ((A<0.35&&I<0.35)||(A>0.65&&I>0.65)) ? 'var(--red)' : 'var(--gold)';
+  dotG.innerHTML =
+    `<circle cx="${x}" cy="${y}" r="16" fill="${col}" fill-opacity=".25" stroke="${col}" stroke-width="3" style="cursor:grab"/>
+     <circle cx="${x}" cy="${y}" r="4" fill="${col}"/>`;
+  document.getElementById('aVal').textContent = A.toFixed(2);
+  document.getElementById('iVal').textContent = I.toFixed(2);
+  document.getElementById('dVal').textContent = Dp.toFixed(2);
+  const v = document.getElementById('mapVerdict');
+  if(Dp < 0.15){
+    v.innerHTML = `<div class="vh" style="color:var(--green)">🟢 On the healthy diagonal</div><div class="vb">As abstract as its instability demands. Nothing to fix — this is what “designed” feels like.</div>`;
+  } else if(A<0.35 && I<0.35){
+    v.innerHTML = `<div class="vh" style="color:var(--red)">🔴 ZONE OF PAIN</div><div class="vb">Stable AND fully concrete: everyone depends on this, yet it can’t flex. When requirements change, it’s jackhammer time. <b>Fix:</b> hide its behavior behind interfaces (raise A), or reduce how many components depend on it.</div>`;
+  } else if(A>0.65 && I>0.65){
+    v.innerHTML = `<div class="vh" style="color:var(--purple)">🟣 ZONE OF USELESSNESS</div><div class="vb">Highly abstract, highly unstable: brilliant contracts nobody consumes, chasing every trend. <b>Fix:</b> find it a real consumer — or delete it. The best abstractions are extracted from working code, never imagined up front.</div>`;
+  } else if(A+I < 1){
+    v.innerHTML = `<div class="vh" style="color:var(--orange)">🟡 Leaning toward PAIN</div><div class="vb">Below the diagonal: more concrete than its stability needs. Add abstraction where it’s volatile, or shed dependents.</div>`;
+  } else {
+    v.innerHTML = `<div class="vh" style="color:var(--orange)">🟡 Leaning toward USELESSNESS</div><div class="vb">Above the diagonal: more abstract than its stability needs. Ground it with concrete implementations and real callers.</div>`;
+  }
+}
+function mapPoint(e){
+  const pt = map.createSVGPoint(); pt.x=e.clientX; pt.y=e.clientY;
+  return pt.matrixTransform(map.getScreenCTM().inverse());
+}
+map.addEventListener('pointerdown', e=>{ dragging=true; const p=mapPoint(e); [A,I]=fromXY(p.x,p.y); drawDot(); });
+window.addEventListener('pointermove', e=>{ if(!dragging) return; const p=mapPoint(e); [A,I]=fromXY(p.x,p.y); drawDot(); });
+window.addEventListener('pointerup', ()=> dragging=false);
+drawDot();
+
+/* ================= PART 3: metric machine ================= */
+const EXAMPLES = [
+  { name:'core-model', steps:[
+    {k:'1 · who depends on ME (afferent)?', v:'billing, shipping, reports, admin, api… → Ca = 8'},
+    {k:'2 · who do I depend on (efferent)?', v:'just logging → Ce = 1'},
+    {k:'3 · instability', v:'I = Ce ÷ (Ca+Ce) = 1 ÷ 9 ≈ 0.11 → a rock-solid role 🪨'},
+    {k:'4 · abstractness', v:'A = 0 interfaces ÷ 20 elements = 0.00 → 100% concrete'},
+    {k:'5 · distance from main sequence', v:'D′ = |A + I − 1| = |0 + 0.11 − 1| ≈ 0.89'},
+    {k:'6 · diagnosis', v:'🔴 ZONE OF PAIN — eight components lean on concrete that cannot flex. Every schema change is a jackhammer operation. Fix: introduce interfaces around the volatile parts (raising A), so it can evolve without breaking its dependents.'}
+  ], finalIdx:5, violet:false },
+  { name:'trend-abstractions', steps:[
+    {k:'1 · who depends on ME?', v:'…nobody → Ca = 0'},
+    {k:'2 · who do I depend on?', v:'json, http, cache, config, logging, events → Ce = 6'},
+    {k:'3 · instability', v:'I = 6 ÷ 6 = 1.00 → maximally unstable 🎈'},
+    {k:'4 · abstractness', v:'A = 9 abstract factories ÷ 10 elements = 0.90 → almost pure contract'},
+    {k:'5 · distance from main sequence', v:'D′ = |0.90 + 1.00 − 1| = 0.90'},
+    {k:'6 · diagnosis', v:'🟣 ZONE OF USELESSNESS — brilliant interfaces, zero consumers, chasing every trend. Fix: find it a real consumer, or delete it. (Best abstractions are extracted FROM working code — never invented up front.)'}
+  ], finalIdx:5, violet:true }
+];
+let ex=0, shown=0;
+function loadExample(i){
+  ex=i; shown=0;
+  document.getElementById('tabA').classList.toggle('active', i===0);
+  document.getElementById('tabB').classList.toggle('active', i===1);
+  renderSteps();
+}
+function renderSteps(){
+  const box = document.getElementById('steps');
+  box.innerHTML = '';
+  for(let i=0;i<shown;i++){
+    const st = EXAMPLES[ex].steps[i];
+    const d = document.createElement('div');
+    d.className = 'step show' + (i===EXAMPLES[ex].finalIdx ? (EXAMPLES[ex].violet?' final violet':' final') : '');
+    d.innerHTML = `<div class="k">${st.k}</div><div class="v">${st.v}</div>`;
+    box.appendChild(d);
+  }
+  document.getElementById('nextStep').disabled = shown >= EXAMPLES[ex].steps.length;
+  document.getElementById('nextStep').textContent = shown >= EXAMPLES[ex].steps.length ? '✔ complete — pick the other example' : '▶ next step';
+}
+function nextStep(){ if(shown < EXAMPLES[ex].steps.length){ shown++; renderSteps(); } }
+loadExample(0);
+</script>
+</body>
+</html>

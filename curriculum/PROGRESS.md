@@ -21,7 +21,7 @@ We tick one checkbox per completed pointer. Keep a one-line "keeper insight" und
 - [x] P1.2.5 Business drivers → characteristics — insight: Stakeholder sentences translate into named characteristics WITH numbers; 3–5 rule; conflicts (security↔performance, scale↔simplicity) get decided, not dodged. Interactive translator in Lesson 05.
 - [x] P1.3.1 Modularity vs granularity — insight: Splitting = modularity (good); sizing = granularity (the danger). Pieces grow linearly, wiring grows quadratically (N(N−1)/2) — the Splitting Machine simulation makes it visceral. Lesson 06.
 - [x] P1.3.2 Cohesion: the 7 levels — insight: Functional → sequential → communicational → procedural → temporal → logical → coincidental. "Same file" ≠ "same family"; splitting a cohesive module only creates coupling. Fake Family Detector game in Lesson 06.
-- [ ] P1.3.3 Coupling metrics: A, I, distance from main sequence — insight:
+- [x] P1.3.3 Coupling metrics: A, I, distance from main sequence — insight: Afferent=who leans on me, efferent=who I lean on; I = Ce/(Ca+Ce) (stability is a ROLE, not a score); A = abstract fraction; D′ = |A+I−1|; Zone of Pain (stable+concrete) vs Zone of Uselessness (abstract+restless). Draggable map in Lesson 07.
 - [ ] P1.3.4 Connascence taxonomy — insight:
 - [ ] P1.3.5 From modules to components — insight:
 
