@@ -22,7 +22,7 @@ We tick one checkbox per completed pointer. Keep a one-line "keeper insight" und
 - [x] P1.3.1 Modularity vs granularity — insight: Splitting = modularity (good); sizing = granularity (the danger). Pieces grow linearly, wiring grows quadratically (N(N−1)/2) — the Splitting Machine simulation makes it visceral. Lesson 06.
 - [x] P1.3.2 Cohesion: the 7 levels — insight: Functional → sequential → communicational → procedural → temporal → logical → coincidental. "Same file" ≠ "same family"; splitting a cohesive module only creates coupling. Fake Family Detector game in Lesson 06.
 - [x] P1.3.3 Coupling metrics: A, I, distance from main sequence — insight: Afferent=who leans on me, efferent=who I lean on; I = Ce/(Ca+Ce) (stability is a ROLE, not a score); A = abstract fraction; D′ = |A+I−1|; Zone of Pain (stable+concrete) vs Zone of Uselessness (abstract+restless). Draggable map in Lesson 07.
-- [ ] P1.3.4 Connascence taxonomy — insight:
+- [x] P1.3.4 Connascence taxonomy — insight: Two components "born together" = change one, other must follow. 9 forms: static (name/type/meaning/position/algorithm) + dynamic (execution/timing/values/identity). Rules: weaken connascence as distance grows; refactors downgrade strong→weak. Pain = SILENT + CROSS-SERVICE. Lesson 08.
 - [ ] P1.3.5 From modules to components — insight:
 
 ## Phase 2 — Architecture Characteristics (12)
