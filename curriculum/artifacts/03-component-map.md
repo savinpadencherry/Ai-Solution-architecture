@@ -1,45 +1,54 @@
 # Artifact 03 — My Project as Components + Connascence Edges
 
 **Pointer:** P1.3.5 · From Modules to Components (Fundamentals ch. 3 §"From Modules to Components")
-**Built from:** live tour — npm spec page for @supabase/supabase-js (facade over 5 components), npmgraph (supabase-js: 8 deps, clean facade vs firebase: 85 modules, peer-dependency hairball), Supabase architecture docs (Envoy → GoTrue/PostgREST/Realtime/Storage/pg-meta/Functions/pg_graphql → Postgres).
+**System mapped:** Balance (Flutter + Firebase + Supabase + Gemini)
+**Built from:** Balance `docs/ARCHITECTURE.md` + `docs/BACKEND_SETUP.md`, prior live tours of Supabase facade vs Firebase dep graph.
 
 ## The definition we're using
 
 **Component = a deployable artifact with an entry point.**
 - Modules are organized *code*; components are *shipped* units. The dividing line: **what deploys**.
-- Dev dependencies are modules, not components — they never deploy.
-- Identical version numbers across "independent" packages = a release train = they secretly deploy as ONE component (supabase-js ships all 5 sub-components in lockstep).
-- Contracts (HTTP routes, APIs) — not shared code — are what let components be written in different languages (GoTrue=Go, PostgREST=Haskell, Realtime=Elixir).
+- Feature folders (`lib/features/board`, BLoCs, repositories) are modules inside the Balance app component — not components themselves.
+- Contracts (HTTP routes, APIs, JWT claims) — not shared code — are what let components be written in different languages.
 
-## My system's component map
+## Balance component map
 
 | Component | What it is (artifact + entry point) | Language/runtime | Talks to |
 |---|---|---|---|
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
+| Balance app | Flutter APK/IPA · `main.dart` | Dart / Flutter on device | SharedPreferences, Firebase Auth/FCM, Supabase gateway, Gemini or proxy, OS calendar/notifs |
+| SharedPreferences | On-device KV | Device OS | Balance app |
+| Firebase Auth | Firebase Auth service | Google cloud | Balance app (Google sign-in) |
+| Firebase Messaging (FCM) | Push delivery | Google cloud | Balance app |
+| Supabase API gateway | Project URL front door | Supabase cloud | App → PostgREST / Realtime / Edge Functions |
+| PostgREST | REST over Postgres tables | Supabase | Postgres, App |
+| Supabase Realtime | Websocket publication (`tickets`) | Elixir on Supabase | Postgres, App |
+| Supabase Postgres | Managed database | Postgres | PostgREST, Realtime, Functions |
+| Edge: discover-events | `supabase/functions/discover-events` | Deno edge | App, external event sources |
+| Edge: push-notify | `supabase/functions/push-notify` | Deno edge | App / push path |
+| Edge: Gemini proxy (opt-in) | `GEMINI_PROXY_URL` | Deno edge | Gemini API |
+| Gemini API | `generativelanguage.googleapis.com` | Google | Proxy or direct from app |
+
+Dev-only (correctly OFF the deployable map): Flutter analyzer, tests, `flutter_launcher_icons`, local `.env` tooling.
 
 ## Edges + connascence audit
 
 | Edge (A → B) | Contract type | Connascence on this edge | Weakest acceptable? |
 |---|---|---|---|
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
+| App → SharedPreferences | Local JSON keys | name, type | Strong OK (distance = 0) |
+| App → Firebase Auth | OAuth / Firebase UID | meaning ("who is the user") | Prefer explicit identity DTO; don't leak Google account shape into domain |
+| App → PostgREST | REST + table/column schema | name, type (and meaning of status enums) | Versioned schema / explicit mappers; never silent column renames |
+| App → Realtime | Published table + payload shape | name + dynamic timing | Tiny contract; treat missed events as first-class |
+| Firebase UID → Supabase `user_id` / RLS | Cross-vendor identity | **meaning across network** | One identity story (e.g. Firebase JWT verified in Supabase); highest-risk edge |
+| App → Gemini (or proxy → Gemini) | Prompt + JSON response schema | meaning, algorithm (parsers) | Weaken via proxy (key stays in edge); freeze response schema; eval harness later |
+| App → FCM / local notifications | Channel + action ids | name + dynamic execution order | Keep action vocabulary tiny and versioned |
+| Edge proxy → Gemini API | HTTP generateContent | name, type | Isolated inside edge component |
 
-Connascence reminder from P1.3.4: static = name/type/meaning/position/algorithm (lives in code & contracts) · dynamic = execution(order)/timing/values/identity (lives at runtime). Rule: **stronger forms must live closer together** — a cross-network edge carrying strong connascence (e.g., meaning, timing) is where distributed systems bleed.
+## Answers to the warm-up questions
 
-## Questions this map must answer (Checkpoint 1 warm-up)
-
-1. Which components could I redeploy right now WITHOUT touching any other? (true components) — which can't? (a hidden monolith)
-2. Which edge would break first if the other side changed its schema without telling me?
-3. Where does my system have a firebase-style hub (one component everything leans on)?
-4. Which components are dev-time only (build tools, MCP servers, IDEs) and correctly NOT on the deployable map?
+1. **Redeploy alone:** Gemini proxy, discover-events, push-notify, and (with care) Postgres migrations *if* clients tolerate the schema. **Can't alone:** Balance app if PostgREST column names change; Supabase rows if Firebase identity encoding changes.
+2. **Breaks first on silent schema change:** App → PostgREST (`tickets` / `profiles` shapes).
+3. **Hub risk:** Balance app is the orchestration hub today (everything leans on it). Supabase Postgres is the data hub. Neither is a Firebase-style 85-module client hairball, but identity straddling Firebase+Supabase is the hidden hub.
+4. **Dev-only correctly excluded:** tests, lints, icon generators, MCP/IDE tooling.
 
 ## Keeper insight
-(filled when the map is done)
+A component map isn't a box diagram — it's a **risk map of edges**. Dangerous = strong connascence + long distance (Firebase identity ↔ Supabase rows, PostgREST schema ↔ Flutter models, Gemini JSON meaning ↔ parsers).
