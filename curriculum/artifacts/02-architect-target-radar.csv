@@ -1,0 +1,54 @@
+name,ring,quadrant,isNew,description
+Python,Adopt,Languages & Frameworks,FALSE,P7+ already yours - deepen to production grade: typing + async + packaging
+Postgres,Adopt,Platforms,FALSE,P5 promote from Trial - the default relational engine; raw SQL not just the Supabase UI
+Docker,Adopt,Tools,FALSE,P6 THE gateway skill - every infra lab in Phases 5-9 runs in it
+Linux,Adopt,Platforms,FALSE,P6 processes + signals + networking - Release It!'s substrate
+GitHub,Adopt,Tools,FALSE,P0 already yours - add PR review + trunk-based flow
+FastAPI,Adopt,Languages & Frameworks,FALSE,P2 the API surface every architecture debate needs - async + free OpenAPI
+Supabase,Adopt,Platforms,FALSE,P0 already yours - target: know exactly what it hides (Postgres + auth + RLS)
+Redis,Adopt,Platforms,FALSE,P6 caching default - first tool of the stability patterns
+GitHub Actions,Adopt,Tools,FALSE,P6 CI/CD baseline - pipelines ship the architecture
+Terraform,Adopt,Tools,FALSE,P6 IaC with local state at zero cost - infra becomes reviewable code
+pgvector,Adopt,Platforms,TRUE,P8 RAG storage on an engine you'll already know - smoothest vector on-ramp
+LiteLLM,Adopt,Tools,TRUE,P9 promote from Assess - AI gateway: routing + fallback + cost caps
+Hugging Face,Adopt,Platforms,FALSE,P7-8 models + datasets + PEFT - the AI engineer's package registry
+OpenAPI,Adopt,Techniques,FALSE,P5 contract-first design - contracts ARE architecture (P5.3.7)
+Kafka (Redpanda),Trial,Platforms,FALSE,P3/P5 event backbone - run locally in Docker for free
+RabbitMQ,Trial,Platforms,FALSE,P1/P3 the queue in queue-vs-topic - finally touch both sides of that decision
+Kubernetes (k3d),Trial,Platforms,FALSE,P6/P9 the orchestration layer all three clouds share - local and free
+NGINX / Envoy,Trial,Tools,FALSE,P3/P6 proxies + LB + TLS - the eight fallacies made touchable
+Prometheus + Grafana,Trial,Tools,FALSE,P6 metrics + dashboards - SLOs need gauges (P2.3.1)
+OpenTelemetry,Trial,Techniques,FALSE,P6 tracing across services - see latency - don't guess it
+k6,Trial,Tools,FALSE,P6 load testing for free - proves your capacity numbers instead of hoping
+LocalStack,Trial,Tools,FALSE,P6 AWS emulator - S3 + IAM + Lambda locally without a bill
+AWS core,Trial,Platforms,FALSE,P6 promote to hands-on via free tier + LocalStack: EC2 + S3 + IAM + VPC + Lambda
+gRPC,Trial,Languages & Frameworks,FALSE,P5 contracts + streaming - the strict-contract option
+vLLM,Trial,Tools,TRUE,P9 self-hosted inference - batching + quantization + KV cache hands-on
+Ragas,Trial,Tools,TRUE,P7/P8 RAG evaluation metrics - eval-driven development made real (P7.3.4)
+promptfoo,Trial,Tools,TRUE,P7/P8 prompt + agent eval harness that runs in CI
+LangGraph,Trial,Languages & Frameworks,TRUE,P8 stateful agent orchestration - graphs over chains
+MCP SDK,Trial,Tools,TRUE,P8 build MCP servers - not just consume Figma's - AI's integration layer
+Langfuse,Trial,Tools,TRUE,P9 LLM tracing + eval telemetry - observability for AI apps
+Qdrant,Trial,Platforms,FALSE,P8 dedicated vector DB - compare honestly against pgvector
+Debezium (CDC),Trial,Platforms,FALSE,P5 change-data-capture + outbox pattern - sync without dual writes
+Azure,Assess,Platforms,FALSE,P6 enterprise cloud - read + free-tier clicks; depth only if an employer pays
+Google Cloud,Assess,Platforms,FALSE,P6 where Firebase lives - the full-platform view eventually
+Snowflake,Assess,Platforms,FALSE,P5 analytical warehouse benchmark - 30-day trial; concepts transfer
+MongoDB,Assess,Platforms,FALSE,P5 document store - Firestore is your proxy; know the real thing
+Cassandra,Assess,Platforms,FALSE,P5 wide-column + availability trade-offs - the AP case study
+ClickHouse,Assess,Platforms,FALSE,P5/P9 real-time analytics engine
+Apache Spark,Assess,Platforms,FALSE,P5 Hadoop's successor - the analytical-data engine (P5.3.8)
+Airflow,Assess,Tools,FALSE,P5/P9 batch orchestration DAGs
+Temporal,Assess,Platforms,FALSE,P5 durable execution - what a saga engine actually looks like
+Istio (service mesh),Assess,Platforms,FALSE,P3/P9 know when NOT to use it - mesh is a senior move not a default
+GraphQL,Assess,Languages & Frameworks,FALSE,P3 API style breadth - when over-fetching hurts more than flexibility
+Elasticsearch / OpenSearch,Assess,Platforms,FALSE,P8 search + hybrid retrieval - BM25 meets vectors
+NeMo Guardrails,Assess,Tools,TRUE,P8 guardrails for agent behavior
+unsloth / PEFT,Assess,Tools,FALSE,P8 LoRA finetuning on free Colab GPUs - when RAG isn't enough
+Vault,Assess,Tools,FALSE,P6 secrets management - config is a stability topic (P6.9)
+Argo CD,Assess,Tools,FALSE,P6 GitOps deployment - P6.13 in software form
+Backstage,Assess,Platforms,FALSE,harvested today - internal developer portals: how big orgs govern platforms
+AG-UI Protocol,Assess,Platforms,TRUE,harvested today - agent-to-UI streaming standard; watch its Trial status
+Apache Hadoop,Caution,Platforms,FALSE,know WHY it lost to object storage + Spark - Frozen Caveman insurance
+IBM Cloud,Caution,Platforms,FALSE,smallest ecosystem for your path - revisit only if an employer pays
+LangChain,Caution,Languages & Frameworks,FALSE,concepts first - heavy abstractions hide exactly what you're learning to see
