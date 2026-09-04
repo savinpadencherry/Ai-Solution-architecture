@@ -2,11 +2,12 @@
 
 We tick one checkbox per completed pointer. Keep a one-line "keeper insight" under each as we go.
 
-## Where we are — handoff note (2026-09-04)
-- **Next pointer:** P1.3.5 (From Modules to Components) — teaching done via live browser tour; DO pending.
-- **P1.3.5 DO:** user describes their Flutter+Supabase(+Firebase?) app in chat → assistant fills `artifacts/03-component-map.md` (components + connascence edges) → tick P1.3.5 → Phase 1 complete → **Checkpoint 1** (Kitchen Flow scenario, assistant plays skeptical CTO, 10 min of "why?").
-- **Personal tech radars** (P1.2.2): render at https://radar.thoughtworks.com using the raw GitHub CSV URLs written inside `artifacts/01-knowledge-pyramid.md` and `artifacts/02-target-stack.md`.
-- **Learning format:** live browser tours (user rejected static HTML lessons) — tour real sites, teach in chat, artifacts into `artifacts/`, tick + commit each pointer. Quizzes only on request; user drives with questions; "next" advances.
+## Where we are — handoff note (2026-09-05)
+- **Phase 1 complete.** P1.3.5 done: Balance component map + connascence edges in `artifacts/03-component-map.md`.
+- **Next:** **Checkpoint 1** — Kitchen Flow scenario (food-delivery: ordering, routing, payment). Assistant plays skeptical CTO; 10 min of "why?". Produce in `artifacts/`: top-3 characteristics with measurable defs, one trade-off canvas, modularity report (cohesion / A-I-D′ / riskiest connascence). No code — pure architect talk.
+- **After C1:** Phase 2 — Architecture Characteristics (Fundamentals ch.4–8).
+- **Personal tech radars** (P1.2.2): render at https://radar.thoughtworks.com using the raw GitHub CSV URLs inside `artifacts/01-knowledge-pyramid.md` and `artifacts/02-target-stack.md`.
+- **Learning format:** live teaching in chat (tour rejected static HTML lessons and unnecessary confirmations). Artifacts into `artifacts/`, tick + commit each pointer. Quizzes only on request; user drives with questions; "next" advances. Prefer concepts over code unless user asks to build.
 
 **Legend:** ☐ not started · ✅ done · 🔁 revisit
 
@@ -29,7 +30,7 @@ We tick one checkbox per completed pointer. Keep a one-line "keeper insight" und
 - [x] P1.3.2 Cohesion: the 7 levels — insight: Functional → sequential → communicational → procedural → temporal → logical → coincidental. "Same file" ≠ "same family"; splitting a cohesive module only creates coupling. Fake Family Detector game in Lesson 06.
 - [x] P1.3.3 Coupling metrics: A, I, distance from main sequence — insight: Afferent=who leans on me, efferent=who I lean on; I = Ce/(Ca+Ce) (stability is a ROLE, not a score); A = abstract fraction; D′ = |A+I−1|; Zone of Pain (stable+concrete) vs Zone of Uselessness (abstract+restless). Draggable map in Lesson 07.
 - [x] P1.3.4 Connascence taxonomy — insight: Two components "born together" = change one, other must follow. 9 forms: static (name/type/meaning/position/algorithm) + dynamic (execution/timing/values/identity). Rules: weaken connascence as distance grows; refactors downgrade strong→weak. Pain = SILENT + CROSS-SERVICE. Lesson 08.
-- [ ] P1.3.5 From modules to components — insight:
+- [x] P1.3.5 From modules to components — insight: A component map is a risk map of edges. Dangerous = strong connascence + long distance (Firebase identity ↔ Supabase rows, PostgREST schema ↔ Flutter models, Gemini JSON meaning ↔ parsers). Modules organize code; components are what deploy.
 
 ## Phase 2 — Architecture Characteristics (12)
 - [ ] P2.1.1 What makes an architecture characteristic — insight:
