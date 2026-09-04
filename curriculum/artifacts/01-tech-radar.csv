@@ -1,0 +1,27 @@
+name,ring,quadrant,isNew,description
+Cursor,Adopt,Tools,FALSE,Daily-driver AI IDE - deep muscle built here
+Claude Code,Adopt,Tools,FALSE,Terminal coding agent - used daily with Python
+Codex,Adopt,Tools,FALSE,OpenAI coding agent - part of daily toolkit
+ZCode,Adopt,Tools,FALSE,Coding agent used for this curriculum and projects
+Antigravity,Adopt,Tools,FALSE,Google agentic IDE - in active daily use
+VSCode,Adopt,Tools,FALSE,Baseline editor everything else hangs off
+GitHub,Adopt,Tools,FALSE,Version control and repo home
+Figma Make,Adopt,Tools,FALSE,Figma AI app-builder used for rapid UI generation
+Figma MCP,Adopt,Platforms,FALSE,MCP server wiring Figma into AI coding tools
+Firebase,Adopt,Platforms,FALSE,Google app platform (auth Firestore hosting)
+Supabase,Adopt,Platforms,FALSE,Postgres-based backend-as-a-service - daily driver
+Python,Adopt,Languages & Frameworks,FALSE,Primary language especially paired with Claude Code
+Flutter,Adopt,Languages & Frameworks,FALSE,Cross-platform UI framework - shipping apps with it
+Postgres,Trial,Platforms,FALSE,Supabase's engine - I use it through an abstraction; goal is to know the core directly
+Technology Radar (practice),Trial,Techniques,TRUE,Twice-yearly ring review of my own stack - adopted via this curriculum
+Kafka,Assess,Platforms,FALSE,Event streaming backbone - heard everywhere never run it
+AWS,Assess,Platforms,FALSE,Default cloud - no hands-on yet; free-tier + LocalStack path planned
+Azure,Assess,Platforms,FALSE,Enterprise cloud - same cost-constrained story as AWS
+Google Cloud,Assess,Platforms,FALSE,Could where Firebase lives - want the full-platform view eventually
+IBM Cloud,Assess,Platforms,FALSE,Known to exist - lowest priority of the four clouds
+Apache Hadoop,Assess,Platforms,FALSE,Batch big-data pioneer - mostly legacy; low priority vs cloud warehouses
+Snowflake,Assess,Platforms,FALSE,Cloud data warehouse - the analytical-side benchmark
+MongoDB,Assess,Platforms,FALSE,Document DB - nearest thing I know is Firebase Firestore
+AG-UI Protocol,Assess,Platforms,TRUE,Open protocol for agent-to-UI streaming - found on TW Radar Vol 34 today
+LiteLLM,Assess,Tools,TRUE,AI gateway unifying LLM APIs - spotted in radar tooltip today
+Backstage,Assess,Platforms,TRUE,Spotify's internal developer portal - spotted on the CNCF Landscape wall today
