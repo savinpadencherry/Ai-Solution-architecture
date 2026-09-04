@@ -46,8 +46,8 @@ Kafka · AWS · Azure · Google Cloud · IBM Cloud · Apache Hadoop · Snowflake
 **Breadth costs reading time, not money.** The Assess ring grows by reading radars, docs, and well-architected frameworks — all free. Hands-on depth is only owed to the ring I get paid in.
 
 ## My rendered radar
-- Rendered live in session: `radar.thoughtworks.com/?documentId=http://localhost:8123/01-tech-radar.csv` (local server on :8123 serving this folder)
-- Screenshot: saved in session artifacts; re-render anytime from the CSV above.
+- Canonical data: `01-tech-radar.csv` in this folder (26 blips — 13 Adopt / 10 Trial+Assess / 3 harvested-today).
+- Render from ANY machine: paste this URL into https://radar.thoughtworks.com → `https://raw.githubusercontent.com/savinpadencherry/Ai-Solution-architecture/main/curriculum/artifacts/01-tech-radar.csv`
 - Re-render planned at P10.5 — the delta between the two radars is the curriculum's receipt.
 
 ## Keeper insight

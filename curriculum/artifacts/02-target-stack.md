@@ -1,7 +1,7 @@
 # Artifact 02 — The Architect's Target Stack (the "to-learn" radar)
 
 **Companion to:** [01-knowledge-pyramid.md](./01-knowledge-pyramid.md) (where I am) · this file + [02-architect-target-radar.csv](./02-architect-target-radar.csv) = where I'm going.
-**Rendered:** same tool — https://radar.thoughtworks.com with the CSV URL. 53 blips · 14 Adopt / 18 Trial / 18 Assess / 3 Caution.
+**Rendered:** same tool — https://radar.thoughtworks.com — paste this URL: `https://raw.githubusercontent.com/savinpadencherry/Ai-Solution-architecture/main/curriculum/artifacts/02-architect-target-radar.csv` · 53 blips · 14 Adopt / 18 Trial / 18 Assess / 3 Caution.
 **Golden rule of this radar:** every blip is tagged with the curriculum phase (P0–P10) that earns it. Nothing here is homework for its own sake — each ring entry gets picked up during a phase, most via free/local tooling.
 
 ## How to read the rings (obligation levels)

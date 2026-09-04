@@ -2,6 +2,12 @@
 
 We tick one checkbox per completed pointer. Keep a one-line "keeper insight" under each as we go.
 
+## Where we are — handoff note (2026-09-04)
+- **Next pointer:** P1.3.5 (From Modules to Components) — teaching done via live browser tour; DO pending.
+- **P1.3.5 DO:** user describes their Flutter+Supabase(+Firebase?) app in chat → assistant fills `artifacts/03-component-map.md` (components + connascence edges) → tick P1.3.5 → Phase 1 complete → **Checkpoint 1** (Kitchen Flow scenario, assistant plays skeptical CTO, 10 min of "why?").
+- **Personal tech radars** (P1.2.2): render at https://radar.thoughtworks.com using the raw GitHub CSV URLs written inside `artifacts/01-knowledge-pyramid.md` and `artifacts/02-target-stack.md`.
+- **Learning format:** live browser tours (user rejected static HTML lessons) — tour real sites, teach in chat, artifacts into `artifacts/`, tick + commit each pointer. Quizzes only on request; user drives with questions; "next" advances.
+
 **Legend:** ☐ not started · ✅ done · 🔁 revisit
 
 ## Phase 0 — Setup, Baseline & Toolkit (4)
