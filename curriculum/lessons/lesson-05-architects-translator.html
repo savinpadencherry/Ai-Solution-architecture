@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 05 · The Architect's Translator</title>
+<style>
+  :root{
+    --bg:#0d1022; --panel:#171b33; --panel2:#1e2342; --line:#2c3358;
+    --text:#e9ecff; --muted:#9aa3cc; --blue:#4fc3f7; --orange:#ffb74d;
+    --green:#6fdd8b; --red:#ff6b6b; --purple:#b388ff; --gold:#ffd54f;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; line-height:1.55;}
+  .wrap{max-width:980px; margin:0 auto; padding:28px 20px 80px;}
+  header{padding:34px 0 10px;}
+  .kicker{color:var(--purple); font-weight:700; letter-spacing:.12em; text-transform:uppercase; font-size:.78rem;}
+  h1{font-size:2rem; margin:.2em 0 .3em; line-height:1.15;}
+  .sub{color:var(--muted); font-size:1.02rem; max-width:46em;}
+  section{margin-top:44px;}
+  h2{font-size:1.35rem; margin-bottom:.2em;}
+  h2 .tag{font-size:.7rem; background:var(--panel2); border:1px solid var(--line); color:var(--muted); border-radius:20px; padding:2px 10px; vertical-align:middle; margin-left:8px; font-weight:600;}
+  .lead{color:var(--muted); margin-bottom:18px; max-width:48em;}
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:20px;}
+  .hint{color:var(--muted); font-size:.9rem; margin-top:10px;}
+  .hint b{color:var(--text);}
+
+  /* buttons */
+  .btnrow{display:flex; gap:10px; flex-wrap:wrap; margin:14px 0;}
+  .btn{background:var(--panel2); color:var(--text); border:1px solid var(--line); border-radius:12px; padding:10px 16px; font-size:.95rem; font-weight:600; cursor:pointer; transition:all .15s;}
+  .btn:hover{transform:translateY(-1px); border-color:var(--muted);}
+  .btn.active{background:var(--blue); color:#08111c; border-color:var(--blue);}
+  .btn.warm.active{background:var(--orange); border-color:var(--orange);}
+  .btn.ghost{background:transparent;}
+
+  /* diagram */
+  .stage{background:#12162c; border:1px solid var(--line); border-radius:14px; padding:6px; margin-top:8px;}
+  svg{display:block; width:100%; height:auto;}
+  .box{fill:#232a52; stroke:#3a4380; stroke-width:1.5; rx:10;}
+  .box.accent{stroke:var(--blue);} .box.warm{stroke:var(--orange);}
+  .lbl{fill:var(--text); font-size:13px; font-weight:600; text-anchor:middle; dominant-baseline:middle; font-family:inherit;}
+  .sub2{fill:var(--muted); font-size:10.5px; text-anchor:middle;}
+  .wire{stroke:#4a5490; stroke-width:2; fill:none;}
+  .wire.new-red{stroke:var(--red); stroke-width:2.5; stroke-dasharray:6 4; fill:none;}
+  .wire.new-green{stroke:var(--green); stroke-width:2.5; stroke-dasharray:6 4; fill:none;}
+  .badge{font-size:12px; font-weight:700;}
+  .badge.bad{fill:var(--red);} .badge.good{fill:var(--green);}
+  .fadein{animation:fade .5s ease;} @keyframes fade{from{opacity:0}to{opacity:1}}
+
+  /* verdict */
+  .verdict{margin-top:14px; border-radius:12px; padding:14px 16px; border:1px solid var(--line); background:var(--panel2); font-size:.95rem;}
+  .verdict .win{font-weight:800;}
+  .verdict.queues .win{color:var(--blue);} .verdict.topic .win{color:var(--orange);}
+  .verdict .why{color:var(--muted); margin-top:4px;}
+
+  /* two-col compare */
+  .cols{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px;}
+  @media(max-width:720px){.cols{grid-template-columns:1fr;}}
+  .cmp{border-radius:12px; padding:14px 16px; border:1px solid var(--line);}
+  .cmp h4{font-size:.95rem; margin-bottom:8px;}
+  .cmp ul{list-style:none;} .cmp li{padding:3px 0 3px 24px; position:relative; font-size:.9rem; color:var(--muted);}
+  .cmp li.plus::before{content:"+"; position:absolute; left:4px; color:var(--green); font-weight:800;}
+  .cmp li.minus::before{content:"–"; position:absolute; left:4px; color:var(--red); font-weight:800;}
+  .cmp.q{background:rgba(79,195,247,.06);} .cmp.t{background:rgba(255,183,77,.06);}
+
+  /* part 2 — drivers */
+  .drivers{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:14px;}
+  @media(max-width:820px){.drivers{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:560px){.drivers{grid-template-columns:1fr;}}
+  .drv{background:var(--panel2); border:1px solid var(--line); border-radius:14px; padding:14px; cursor:pointer; transition:all .15s; position:relative;}
+  .drv:hover{transform:translateY(-2px); border-color:var(--muted);}
+  .drv .emo{font-size:1.6rem;}
+  .drv .say{font-size:.92rem; font-weight:600; margin-top:6px;}
+  .drv .who{font-size:.75rem; color:var(--muted); margin-top:4px;}
+  .drv.on{border-color:var(--green); background:rgba(111,221,139,.08); box-shadow:0 0 0 1px var(--green) inset;}
+  .drv .tick{position:absolute; top:10px; right:12px; color:var(--green); font-weight:800; opacity:0; transition:opacity .15s;}
+  .drv.on .tick{opacity:1;}
+
+  .out{margin-top:16px; display:none;}
+  .out.show{display:block; animation:fade .35s ease;}
+  .chiprow{display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;}
+  .chip{border-radius:12px; padding:10px 14px; border:1px solid var(--line); background:var(--panel2); min-width:200px; flex:1;}
+  .chip .nm{font-weight:800; color:var(--gold);}
+  .chip .tg{font-size:.82rem; color:var(--muted); margin-top:3px;}
+  .conflict{display:none; margin-top:14px; border:1px solid var(--red); background:rgba(255,107,107,.08); color:#ffc9c9; border-radius:12px; padding:12px 16px; font-size:.92rem;}
+  .conflict.show{display:block; animation:fade .3s ease;}
+
+  .callout{margin-top:14px; border-left:4px solid var(--purple); background:rgba(179,136,255,.07); border-radius:0 12px 12px 0; padding:12px 16px; font-size:.95rem;}
+  .callout b{color:var(--purple);}
+  .oneLiner{margin-top:30px; text-align:center; font-size:1.15rem; font-weight:700; padding:18px; border:1px dashed var(--line); border-radius:14px; color:var(--gold);}
+  footer{margin-top:50px; color:var(--muted); font-size:.8rem; text-align:center;}
+  .legend{display:flex; gap:16px; margin-top:6px; flex-wrap:wrap;}
+  .legend span{font-size:.8rem; color:var(--muted);}
+  .sw{display:inline-block; width:22px; height:3px; vertical-align:middle; margin-right:6px; border-radius:2px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">Phase 1 · Lesson 05 · P1.2.4 + P1.2.5</div>
+  <h1>🗣️ The Architect's Translator</h1>
+  <p class="sub">Architects speak two languages. Business says <i>“customers must trust us”</i> — engineering needs <i>“99.95% uptime, zero payment loss, full audit trail.”</i> This lesson trains the translation — with two playable simulations.</p>
+</header>
+
+<!-- ============ PART 1 ============ -->
+<section>
+  <h2>Part 1 · Queue vs Topic — replay the fight <span class="tag">P1.2.4 · consolidation</span></h2>
+  <p class="lead">The auction system: <b>Bid Producer</b> must deliver every bid to three services. You control two things: the <b>messaging shape</b>, and a button that <b>adds a 4th service</b>. Watch what each shape costs.</p>
+
+  <div class="card">
+    <div class="btnrow">
+      <button class="btn mode active" id="modeQ" onclick="setMode('q')">📬 Queues</button>
+      <button class="btn mode warm" id="modeT" onclick="setMode('t')">📢 Topic</button>
+      <button class="btn ghost" id="addBtn" onclick="toggleAdd()">＋ Add “Bid History” service</button>
+    </div>
+
+    <div class="stage">
+      <svg viewBox="0 0 660 400" id="svgQ">
+        <rect class="box accent" x="30" y="120" width="130" height="64" rx="10"/>
+        <text class="lbl" x="95" y="146">Bid Producer</text>
+        <text class="sub2" x="95" y="164">sends every bid…</text>
+        <!-- queues -->
+        <g id="q4grp" style="display:none">
+          <line class="wire new-red" x1="160" y1="158" x2="300" y2="330"/>
+          <rect class="box" x="300" y="308" width="110" height="44" rx="10"/>
+          <text class="lbl" x="355" y="330">queue 4</text>
+          <line class="wire new-red" x1="410" y1="330" x2="500" y2="330"/>
+          <rect class="box" x="500" y="308" width="140" height="44" rx="10"/>
+          <text class="lbl" x="570" y="330">Bid History</text>
+          <text class="badge bad" x="205" y="300">✏️ producer must be modified!</text>
+        </g>
+        <line class="wire" x1="160" y1="140" x2="300" y2="52"/>
+        <line class="wire" x1="160" y1="152" x2="300" y2="152"/>
+        <line class="wire" x1="160" y1="164" x2="300" y2="252"/>
+        <rect class="box" x="300" y="30" width="110" height="44" rx="10"/>
+        <rect class="box" x="300" y="130" width="110" height="44" rx="10"/>
+        <rect class="box" x="300" y="230" width="110" height="44" rx="10"/>
+        <text class="lbl" x="355" y="52">queue 1</text>
+        <text class="lbl" x="355" y="152">queue 2</text>
+        <text class="lbl" x="355" y="252">queue 3</text>
+        <line class="wire" x1="410" y1="52" x2="500" y2="52"/>
+        <line class="wire" x1="410" y1="152" x2="500" y2="152"/>
+        <line class="wire" x1="410" y1="252" x2="500" y2="252"/>
+        <rect class="box" x="500" y="30" width="140" height="44" rx="10"/>
+        <rect class="box" x="500" y="130" width="140" height="44" rx="10"/>
+        <rect class="box" x="500" y="230" width="140" height="44" rx="10"/>
+        <text class="lbl" x="570" y="52">Bid Capture</text>
+        <text class="lbl" x="570" y="152">Bid Tracking</text>
+        <text class="lbl" x="570" y="252">Bid Analytics</text>
+        <text class="sub2" x="330" y="390">📬 one message → one consumer · each line is a private, monitorable channel</text>
+      </svg>
+
+      <svg viewBox="0 0 660 400" id="svgT" style="display:none">
+        <rect class="box warm" x="30" y="120" width="130" height="64" rx="10"/>
+        <text class="lbl" x="95" y="146">Bid Producer</text>
+        <text class="sub2" x="95" y="164">posts every bid ONCE</text>
+        <line class="wire" x1="160" y1="152" x2="300" y2="152"/>
+        <circle cx="345" cy="152" r="46" fill="#3a2f1c" stroke="var(--orange)" stroke-width="2"/>
+        <text class="lbl" x="345" y="150" fill="var(--orange)">TOPIC</text>
+        <text class="sub2" x="345" y="168">“bids”</text>
+        <line class="wire" x1="390" y1="130" x2="500" y2="52"/>
+        <line class="wire" x1="391" y1="152" x2="500" y2="152"/>
+        <line class="wire" x1="390" y1="174" x2="500" y2="252"/>
+        <g id="t4grp" style="display:none">
+          <line class="wire new-green" x1="378" y1="185" x2="500" y2="340"/>
+          <rect class="box" x="500" y="318" width="140" height="44" rx="10"/>
+          <text class="lbl" x="570" y="340">Bid History</text>
+          <text class="badge good" x="240" y="368">✨ producer untouched — it just subscribed</text>
+        </g>
+        <rect class="box" x="500" y="30" width="140" height="44" rx="10"/>
+        <rect class="box" x="500" y="130" width="140" height="44" rx="10"/>
+        <rect class="box" x="500" y="230" width="140" height="44" rx="10"/>
+        <text class="lbl" x="570" y="52">Bid Capture</text>
+        <text class="lbl" x="570" y="152">Bid Tracking</text>
+        <text class="lbl" x="570" y="252">Bid Analytics</text>
+        <text class="sub2" x="330" y="390">📢 one message → copied to every subscriber · producer has no idea who they are</text>
+      </svg>
+    </div>
+
+    <div class="legend">
+      <span><span class="sw" style="background:#4a5490"></span>existing wiring</span>
+      <span><span class="sw" style="background:var(--red)"></span>change required (pain)</span>
+      <span><span class="sw" style="background:var(--green)"></span>free addition</span>
+    </div>
+
+    <div class="cols">
+      <div class="cmp q">
+        <h4>📬 Queues give / cost</h4>
+        <ul>
+          <li class="plus">Private lines — wiretapping trips an alarm</li>
+          <li class="plus">Each consumer gets its own data contract</li>
+          <li class="plus">Per-queue monitoring → autoscaling</li>
+          <li class="minus">Every new listener = touch the producer</li>
+        </ul>
+      </div>
+      <div class="cmp t">
+        <h4>📢 Topic gives / costs</h4>
+        <ul>
+          <li class="plus">Add listeners forever, producer untouched</li>
+          <li class="plus">Producer fully decoupled from consumers</li>
+          <li class="minus">Anyone can silently subscribe = wiretap risk</li>
+          <li class="minus">Everyone gets the same payload; no per-consumer contracts</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="hint"><b>Now weight the business drivers.</b> Same two options — but the “right answer” changes with what the company is optimizing for. Pick a business:</p>
+    <div class="btnrow">
+      <button class="btn" onclick="verdict('bank')">🏦 Fintech auction — “regulators & trust first”</button>
+      <button class="btn" onclick="verdict('startup')">🚀 Seed startup — “features weekly”</button>
+      <button class="btn" onclick="verdict('scale')">🌍 Viral scale — “50× traffic spikes”</button>
+    </div>
+    <div class="verdict" id="verdictBox" style="display:none">
+      <div class="win" id="verdictWin"></div>
+      <div class="why" id="verdictWhy"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PART 2 ============ -->
+<section>
+  <h2>Part 2 · The Translator — business speak → engineering targets <span class="tag">P1.2.5 · new</span></h2>
+  <p class="lead">Stakeholders never say “we need 99.95% availability.” They say human things. <b>Click the business statements you’d hear in a real meeting</b> — watch them translate into named architecture characteristics, each with a number attached. Numbers are the whole trick: a characteristic without a number can’t be designed, tested, or defended.</p>
+
+  <div class="card">
+    <div class="drivers" id="drivers"></div>
+
+    <div class="out" id="out">
+      <div class="callout" style="margin-top:14px">⬇️ Your selection, translated into <b>architecture characteristics with measurable targets</b>:</div>
+      <div class="chiprow" id="chips"></div>
+      <div class="conflict" id="conflict"></div>
+    </div>
+
+    <div class="callout" style="margin-top:16px">
+      <b>The 3–5 rule:</b> real systems optimize for <b>3 to 5</b> characteristics, not 15. Every characteristic you add fights the others (security vs speed, scale vs simplicity). Picking the <i>few that matter</i> — and rejecting the rest, on record — is the actual architecture decision.
+    </div>
+  </div>
+</section>
+
+<div class="oneLiner">“It depends” is not a dodge — it’s a promise:<br>it depends on these drivers, weighed like this, and here are the numbers.</div>
+
+<footer>ZCode AI-Architect Academy · Lesson 05 · built from Richards & Ford, <i>Fundamentals of Software Architecture</i> ch. 1–2 & 4–5</footer>
+</div>
+
+<script>
+/* ---------- Part 1 ---------- */
+let mode = 'q', added = false;
+const svgQ = document.getElementById('svgQ'), svgT = document.getElementById('svgT');
+const q4 = document.getElementById('q4grp'), t4 = document.getElementById('t4grp');
+const addBtn = document.getElementById('addBtn');
+
+function setMode(m){
+  mode = m;
+  document.getElementById('modeQ').classList.toggle('active', m==='q');
+  document.getElementById('modeT').classList.toggle('active', m==='t');
+  svgQ.style.display = (m==='q') ? 'block' : 'none';
+  svgT.style.display = (m==='t') ? 'block' : 'none';
+  q4.style.display = (m==='q' && added) ? '' : 'none';
+  t4.style.display = (m==='t' && added) ? '' : 'none';
+  document.getElementById('verdictBox').style.display = 'none';
+}
+function toggleAdd(){
+  added = !added;
+  addBtn.textContent = added ? '↺ Remove “Bid History” service' : '＋ Add “Bid History” service';
+  setMode(mode);
+  if(added){
+    const vb = document.getElementById('verdictBox');
+    vb.style.display='block'; vb.className='verdict ' + mode;
+    document.getElementById('verdictWin').textContent =
+      mode==='q' ? '📬 Queues: adding the 4th service means MODIFYING the producer'
+                 : '📢 Topic: adding the 4th service is FREE — zero producer changes';
+    document.getElementById('verdictWhy').textContent =
+      mode==='q' ? 'New queue + a new connection from Bid Producer. Extensibility is the price of privacy.'
+                 : 'A new subscriber just appears. But notice: everyone can also silently read every bid.';
+  }
+}
+function verdict(kind){
+  const vb = document.getElementById('verdictBox');
+  const win = document.getElementById('verdictWin'), why = document.getElementById('verdictWhy');
+  vb.style.display='block';
+  if(kind==='bank'){
+    vb.className='verdict queues';
+    win.textContent='🏆 Winner: QUEUES — even though they’re uglier to extend';
+    why.textContent='Regulators and trust = security & audit trail dominate. A silent wiretap on a topic is an existential risk; slow extensibility is just an annoyance. Trade-offs land where the business can afford them.';
+  } else if(kind==='startup'){
+    vb.className='verdict topic';
+    win.textContent='🏆 Winner: TOPIC — extensibility is survival';
+    why.textContent='Features ship weekly, new analytics ideas appear monthly. Adding listeners without touching the producer is the superpower you need. Security posture is lighter at this stage.';
+  } else {
+    vb.className='verdict queues';
+    win.textContent='🏆 Winner: QUEUES — because you can monitor & autoscale per backlog';
+    why.textContent='With 50× spikes you need to watch each consumer’s backlog and scale it independently — topics don’t give you that dial. (Escape hatch: AMQP’s exchange+queue model buys back some extensibility — breadth of knowledge literally changes the answer.)';
+  }
+}
+
+/* ---------- Part 2 ---------- */
+const DATA = [
+  {emo:'🏦', say:'“Customers must trust us with their money.”', who:'— CEO, fintech',
+   chars:[['Security','100% of payment requests authenticated & encrypted; 0 critical vulnerabilities open > 7 days'],
+          ['Reliability','zero payment transactions lost — ever (verified by reconciliation)'],
+          ['Auditability','every payment action logged with who/what/when, retained 7 years']]},
+  {emo:'🚀', say:'“We need to ship features every single week.”', who:'— Head of Product',
+   chars:[['Deployability','deploys daily; a deploy takes < 15 min, no downtime'],
+          ['Testability','test suite runs < 10 min and gates every merge'],
+          ['Modularity','features touch ≤ 2 components (measured via dependency checks)']]},
+  {emo:'🎄', say:'“Black Friday will bring 50× our normal traffic.”', who:'— CTO',
+   chars:[['Scalability','handles 10,000 orders/minute sustained'],
+          ['Elasticity','capacity doubles in < 5 minutes automatically, shrinks after'],
+          ['Performance','p95 response < 300 ms even at peak']]},
+  {emo:'⏱️', say:'“Every minute of downtime costs us €10,000.”', who:'— CFO',
+   chars:[['Availability','99.95% uptime = ≤ 22 minutes down per month (error budget)'],
+          ['Fault tolerance','one component failing never cascades system-wide'],
+          ['Recoverability','full recovery in < 15 min; data loss ≤ 1 min (RTO/RPO)']]},
+  {emo:'👶', say:'“We are literally three engineers and a hamster.”', who:'— founder',
+   chars:[['Simplicity','one deployable app, ≤ 3 moving parts, any dev onboarded in a day'],
+          ['Operability','one on-call person can run the whole thing'],
+          ['Affordability','infrastructure < €500/month']]},
+  {emo:'🌍', say:'“Users in 30 countries, mostly on phones.”', who:'— Growth lead',
+   chars:[['Performance','p95 < 200 ms worldwide (edge/CDN delivery)'],
+          ['Localization','UI + content in 12 launch languages'],
+          ['Usability','core flow completable on a 3G phone in < 60 s']]}
+];
+const CONFLICTS = [
+  [['Security','Performance'],'Security vs Performance: encryption, filtering and checks add latency. You don’t “max both” — you pick a target for each and accept the trade-off on the record.'],
+  [['Scalability','Simplicity'],'Scalability vs Simplicity: the machinery that survives 50× traffic (queues, caches, replicas) is exactly what a 3-person team struggles to babysit.']
+];
+const active = new Set();
+const drvBox = document.getElementById('drivers');
+DATA.forEach((d,i)=>{
+  const el = document.createElement('div');
+  el.className='drv'; el.innerHTML = `<span class="tick">✓</span><div class="emo">${d.emo}</div><div class="say">${d.say}</div><div class="who">${d.who}</div>`;
+  el.onclick = ()=>{ active.has(i)?active.delete(i):active.add(i); el.classList.toggle('on'); render(); };
+  drvBox.appendChild(el);
+});
+function render(){
+  const out = document.getElementById('out');
+  out.classList.toggle('show', active.size>0);
+  const chips = document.getElementById('chips');
+  chips.innerHTML='';
+  const seen = new Map();
+  [...active].forEach(i=>DATA[i].chars.forEach(([n,t])=>{ if(!seen.has(n)) seen.set(n,t); }));
+  seen.forEach((t,n)=>{
+    const c = document.createElement('div'); c.className='chip';
+    c.innerHTML = `<div class="nm">${n}</div><div class="tg">${t}</div>`;
+    chips.appendChild(c);
+  });
+  const cf = document.getElementById('conflict');
+  const names = [...seen.keys()];
+  const hit = CONFLICTS.find(([pair])=> pair.every(p=>names.includes(p)));
+  if(hit){ cf.style.display='block'; cf.innerHTML = '⚡ <b>Conflict detected:</b> '+hit[1]; }
+  else { cf.style.display='none'; }
+}
+</script>
+</body>
+</html>

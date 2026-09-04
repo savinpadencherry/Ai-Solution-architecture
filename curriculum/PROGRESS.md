@@ -5,20 +5,20 @@ We tick one checkbox per completed pointer. Keep a one-line "keeper insight" und
 **Legend:** ☐ not started · ✅ done · 🔁 revisit
 
 ## Phase 0 — Setup, Baseline & Toolkit (4)
-- [ ] P0.1 Orientation & the four-book map — insight:
-- [ ] P0.2 Baseline self-assessment — insight:
-- [ ] P0.3 Trade-off analysis, the core discipline — insight:
-- [ ] P0.4 ADRs + fitness functions toolkit — insight:
+- [x] P0.1 Orientation & the four-book map — insight: The architect owns questions with no Googleable answers; the method (trade-offs → business drivers → decide → record → govern) IS the skill.
+- [x] P0.2 Baseline self-assessment — insight: Architects grow the MIDDLE of the knowledge pyramid (breadth), not just the top (depth); baseline file ready in artifacts, fill-in ongoing.
+- [x] P0.3 Trade-off analysis, the core discipline — insight: List BOTH columns (advantages AND brutal disadvantages) for every option before choosing; the winner's downsides must land where the business can afford them. Messaging bridge taught: queue = work distribution (one message, one worker, exactly once), topic = event fan-out (one event, all subscribers).
+- [x] P0.4 ADRs + fitness functions toolkit — insight: ADR = memory for humans (immutable, superseded never edited); fitness function = memory for robots (automated check that a decision still holds). Together: governance without nagging.
 
 ## Phase 1 — Architectural Thinking & Modularity (13)
-- [ ] P1.1.1 Definitions: structure-behavior-connection — insight:
-- [ ] P1.1.2 Laws of software architecture — insight:
-- [ ] P1.1.3 The 8 core expectations of an architect — insight:
-- [ ] P1.2.1 Architecture–design spectrum — insight:
+- [x] P1.1.1 Definitions: structure-behavior-connection — insight: Architecture answers 3 questions — how it's structured (blocks), how it behaves (runtime interaction), how parts connect (contracts). "Hard to change" tells you which decisions are architectural. Quiz 1: 6/6.
+- [x] P1.1.2 Laws of software architecture — insight: Law 1: everything is a trade-off (the architect's question is "what does this make WORSE?"). Law 2: why beats how — tools churn, reasoning survives; ADRs record why.
+- [x] P1.1.3 The 8 core expectations of an architect — insight: Head-chef frame: design, analyze continuously, manage risk, keep current, know the domain & business, enable the team, navigate politics. Personality trap: control-freak vs armchair — the middle (decide key things, delegate, stay hands-on) wins. Quiz: 2/2.
+- [x] P1.2.1 Architecture–design spectrum — insight: Three tests place any decision on the spectrum — strategic vs tactical, effort to change, significance of trade-offs. Position determines WHO decides and HOW MUCH process it needs. (Card sort key: 1-D, 2-A, 3-A, 4-D, 5-A, 6-M, 7-D, 8-A.)
 - [ ] P1.2.2 Breadth vs depth; knowledge pyramid — insight:
-- [ ] P1.2.3 Antipatterns: Frozen Caveman, Bottleneck Trap — insight:
-- [ ] P1.2.4 Analyzing trade-offs (auction case) — insight:
-- [ ] P1.2.5 Business drivers → characteristics — insight:
+- [x] P1.2.3 Antipatterns: Frozen Caveman, Bottleneck Trap — insight: Frozen Caveman = one old scar becomes a permanent veto ("what if we lose Italy?"); antidote is realistic risk assessment, not forgetting. Bottleneck Trap = architect holding critical-path code; antidote: delegate critical path, stay hands-on via POCs, tech debt, bugs, automation, reviews.
+- [x] P1.2.4 Analyzing trade-offs (auction case) — insight: Consolidated in Lesson 05 simulation (queue-vs-topic + business-driver presets); see curriculum/lessons/lesson-05-architects-translator.html.
+- [x] P1.2.5 Business drivers → characteristics — insight: Stakeholder sentences translate into named characteristics WITH numbers; 3–5 rule; conflicts (security↔performance, scale↔simplicity) get decided, not dodged. Interactive translator in Lesson 05.
 - [ ] P1.3.1 Modularity vs granularity — insight:
 - [ ] P1.3.2 Cohesion: the 7 levels — insight:
 - [ ] P1.3.3 Coupling metrics: A, I, distance from main sequence — insight:

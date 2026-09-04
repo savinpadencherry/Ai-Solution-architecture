@@ -19,18 +19,19 @@ We go **one pointer at a time**. Every pointer (`P<phase>.<lesson>.<n>`) is a sm
 
 ### The 6-step pointer loop
 1. **READ** — I extract the relevant sections from the PDF and teach you the concepts with my own explanations, diagrams (ASCII/Mermaid), and examples. I supplement with live web research (papers, docs, benchmarks) via the browser when it adds value.
-2. **CHECK** — I quiz you with 3–6 questions (mix of recall, application, and trade-off reasoning) until you pass. Wrong answers loop back to targeted re-teaching.
-3. **DO** — A hands-on exercise or artifact: an ADR, a fitness function, a diagram, code, an eval harness, a migration plan.
+2. **ASK** — You drive. Ask any question the moment a doubt appears — that's where learning happens. No quizzes, no graded gates from my side; depth follows your curiosity, and I re-teach anything from a different angle on request.
+3. **DO** — A hands-on exercise or artifact: an ADR, a fitness function, a diagram, code, an eval harness, a migration plan. We build these together.
 4. **CONNECT** — We explicitly link this pointer to 2–3 other pointers across books (e.g., how Release It!'s circuit breaker shows up inside Chip Huyen's inference infrastructure).
 5. **ARTIFACT** — Everything you produce goes into `curriculum/artifacts/` — by the end, this folder is your portfolio proof of mastery.
 6. **MARK** — We tick the checkbox in `PROGRESS.md` and log one "keeper insight" per pointer.
 
 ### Working rules
-- **No passive reading.** If you can't defend the trade-offs, the pointer isn't done.
-- **Every phase ends in a checkpoint** — a graded mini-project. Fail it and we revisit the weakest pointers before moving on.
-- **Artifacts over notes.** Each artifact must be usable in a real job (ADR, diagram, runbook, eval report, architecture doc).
-- **Spaced repetition:** at the start of each session I fire 2–3 rapid review questions from previously completed pointers.
-- **Say "go" / "start"** to begin the next pointer; say **`next`** mid-session to continue; say **`review P5.3`** to revisit any pointer.
+- **You drive the questions.** I teach; interrupt the moment something is unclear.
+- **Plain language first.** Every concept starts with an everyday analogy before any jargon; every technical term is defined the moment it first appears. If a lesson assumes something not yet taught, say "go back" — the gap gets filled before we continue.
+- **Quizzes and puzzles only on request.** You say "quiz me" or "give me a puzzle" when you want one — I never assign unrequested exercises or homework. You ask questions whenever doubts appear; doubts set the depth.
+- **Artifacts over notes.** Each artifact should be usable in a real job (ADR, diagram, runbook, eval report, architecture doc).
+- **Spaced re-connection:** each pointer explicitly links back to earlier ones so nothing rots.
+- **Say "next"** to move to the next pointer; say **`review P5.3`** to revisit any pointer anytime.
 
 ### Cadence & duration
 - **121 pointers** across 11 phases (Phase 0–10).
@@ -53,8 +54,12 @@ curriculum/
 ├── CURRICULUM.md      ← master index of all phases & pointers
 ├── PROGRESS.md        ← checkbox tracker (we tick as we go)
 ├── phases/            ← ultra-detailed lesson plans, one file per phase
+├── lessons/           ← interactive HTML visual guides (the actual lessons — served at http://localhost:8123)
 └── artifacts/         ← your portfolio: ADRs, diagrams, code, eval reports, capstones
 ```
+
+### Delivery format
+- **Lessons are visual.** Every pointer gets an interactive HTML guide in `curriculum/lessons/` (graphics, simulations, click-to-explore), served locally at `http://localhost:8123`. Plain text is only for answers to your questions.
 
 ### How each lesson plan is structured
 Every `phases/phase-XX-*.md` contains:
